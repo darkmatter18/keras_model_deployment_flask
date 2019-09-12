@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>F-MNIST</title>
+</head>
+
+<body>
+    <div>
+        <form id="img-form">
+            <input type="file" name="image" />
+            <button type="submit">Send</button>
+        </form>
+    </div>
+    <div id="chart_div">
+
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.4.1.js"
+        integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous">
+        </script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+    <script>
+        google.charts.load('current', { packages: ['corechart', 'bar'] });
+        
+
+        result = Array()
+        $('#img-form').submit(function (e) {
+            e.preventDefault();
+            console.log('Sending Image')
+
+            var data = new FormData(this);
+
+            $.ajax({
+                type: 'POST',
+                url: '/api/predict',
+                processData: false,
+                contentType: false,
+                cache: false,
+                async: true,
+                data: data
+            }).done(function (r) {
+                console.log(r);
+                result = r.probs
+                result.unshift(['Type', 'Probability'])
+                
+                var data = google.visualization.arrayToDataTable(result);
+
+                var options = {
+                    title: 'Prediction',
+                    interpolateNulls: false,
+                    height: 400,
+                    width: 600,
+                    hAxis: {
+                        title: 'Probability',
+                        minValue: 0,
+                        maxValue: 1.0
+                    },
+                    vAxis: {
+                        title: 'Type'
+
+                    }
+                };
+                var chart = new google.visualization.BarChart(document.getElementById('chart_div'));
+                chart.draw(data, options);
+
+
+
+            }).fail(function (r) {
+                console.log(r);
+            })
+        })
+    </script>
+</body>
+
+</html>
