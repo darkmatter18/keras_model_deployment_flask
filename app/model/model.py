@@ -15,7 +15,7 @@ def init():
     print("Loading Model")
     print(os.path.dirname(os.path.abspath(__file__)))
     print(os.getcwd())
-    model_path = os.path.join(os.getcwd(), 'app','api', 'mnist.h5')
+    model_path = os.path.join(os.getcwd(), 'app','model', 'mnist.h5')
     sess = tf.Session()
     set_session(sess)
     m = keras.models.load_model(model_path)
